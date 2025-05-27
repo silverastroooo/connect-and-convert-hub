@@ -17,9 +17,24 @@ const CampaignCreator = () => {
   const [campaignGoal, setCampaignGoal] = useState('');
   const [campaignDescription, setCampaignDescription] = useState('');
   const [campaignMessage, setCampaignMessage] = useState('');
+  const [audienceSize, setAudienceSize] = useState(1000);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const { toast } = useToast();
   const { addCampaign } = useCampaigns();
+
+  const handleRulesChange = (rules: any[]) => {
+    // Calculate audience size based on rules
+    const baseSize = 5000;
+    let calculatedSize = baseSize;
+    
+    rules.forEach(rule => {
+      if (rule.field && rule.operator && rule.value) {
+        calculatedSize = Math.floor(calculatedSize * 0.7); // Each rule reduces audience
+      }
+    });
+    
+    setAudienceSize(Math.max(calculatedSize, 50));
+  };
 
   const generateAIMessage = async () => {
     setIsGeneratingAI(true);
@@ -55,7 +70,7 @@ const CampaignCreator = () => {
       goal: campaignGoal,
       description: campaignDescription,
       message: campaignMessage,
-      audience_size: Math.floor(Math.random() * 1000) + 100,
+      audience_size: audienceSize,
       status: 'draft',
       sent_count: 0,
       delivered_count: 0
@@ -66,6 +81,7 @@ const CampaignCreator = () => {
     setCampaignGoal('');
     setCampaignDescription('');
     setCampaignMessage('');
+    setAudienceSize(1000);
   };
 
   const launchCampaign = async () => {
@@ -83,10 +99,10 @@ const CampaignCreator = () => {
       goal: campaignGoal,
       description: campaignDescription,
       message: campaignMessage,
-      audience_size: Math.floor(Math.random() * 1000) + 100,
+      audience_size: audienceSize,
       status: 'active',
-      sent_count: Math.floor(Math.random() * 800) + 200,
-      delivered_count: Math.floor(Math.random() * 700) + 180
+      sent_count: Math.floor(audienceSize * 0.9),
+      delivered_count: Math.floor(audienceSize * 0.85)
     });
 
     // Reset form
@@ -94,6 +110,7 @@ const CampaignCreator = () => {
     setCampaignGoal('');
     setCampaignDescription('');
     setCampaignMessage('');
+    setAudienceSize(1000);
   };
 
   return (
@@ -160,10 +177,10 @@ const CampaignCreator = () => {
           <Card>
             <CardHeader>
               <CardTitle>Audience Segmentation</CardTitle>
-              <CardDescription>Define rules to target specific customer segments</CardDescription>
+              <CardDescription>Define rules to target specific customer segments (Est. {audienceSize.toLocaleString()} customers)</CardDescription>
             </CardHeader>
             <CardContent>
-              <RuleBuilder />
+              <RuleBuilder onRulesChange={handleRulesChange} />
             </CardContent>
           </Card>
         </TabsContent>

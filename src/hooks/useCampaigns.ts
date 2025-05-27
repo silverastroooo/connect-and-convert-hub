@@ -34,7 +34,22 @@ export const useCampaigns = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setCampaigns(data || []);
+      
+      const formattedCampaigns = (data || []).map(campaign => ({
+        id: campaign.id,
+        name: campaign.name,
+        message: campaign.message || '',
+        goal: campaign.goal || '',
+        description: campaign.description || '',
+        audience_size: campaign.audience_size || 0,
+        status: (campaign.status as 'draft' | 'active' | 'completed') || 'draft',
+        sent_count: campaign.sent_count || 0,
+        delivered_count: campaign.delivered_count || 0,
+        created_at: campaign.created_at,
+        updated_at: campaign.updated_at
+      }));
+      
+      setCampaigns(formattedCampaigns);
     } catch (error: any) {
       toast({
         title: "Error fetching campaigns",
@@ -61,7 +76,21 @@ export const useCampaigns = () => {
 
       if (error) throw error;
       
-      setCampaigns(prev => [data, ...prev]);
+      const formattedCampaign = {
+        id: data.id,
+        name: data.name,
+        message: data.message || '',
+        goal: data.goal || '',
+        description: data.description || '',
+        audience_size: data.audience_size || 0,
+        status: (data.status as 'draft' | 'active' | 'completed') || 'draft',
+        sent_count: data.sent_count || 0,
+        delivered_count: data.delivered_count || 0,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
+      setCampaigns(prev => [formattedCampaign, ...prev]);
       toast({
         title: "Campaign created!",
         description: `${data.name} has been ${data.status === 'active' ? 'launched' : 'saved as draft'}.`,
@@ -86,8 +115,22 @@ export const useCampaigns = () => {
 
       if (error) throw error;
       
+      const formattedCampaign = {
+        id: data.id,
+        name: data.name,
+        message: data.message || '',
+        goal: data.goal || '',
+        description: data.description || '',
+        audience_size: data.audience_size || 0,
+        status: (data.status as 'draft' | 'active' | 'completed') || 'draft',
+        sent_count: data.sent_count || 0,
+        delivered_count: data.delivered_count || 0,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
       setCampaigns(prev => prev.map(campaign => 
-        campaign.id === id ? data : campaign
+        campaign.id === id ? formattedCampaign : campaign
       ));
     } catch (error: any) {
       toast({

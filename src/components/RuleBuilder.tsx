@@ -23,8 +23,49 @@ const RuleBuilder = ({ onRulesChange }: RuleBuilderProps) => {
     { id: '1', field: '', operator: '', value: '' }
   ]);
 
+  // Calculate estimated audience based on rules
+  const calculateAudienceSize = (currentRules: Rule[]) => {
+    const baseAudience = 5000; // Base customer count
+    let estimatedSize = baseAudience;
+
+    currentRules.forEach(rule => {
+      if (rule.field && rule.operator && rule.value) {
+        switch (rule.field) {
+          case 'total_spent':
+            const spentValue = parseFloat(rule.value);
+            if (rule.operator === 'gt') {
+              estimatedSize = Math.floor(estimatedSize * (spentValue > 1000 ? 0.3 : 0.6));
+            } else if (rule.operator === 'lt') {
+              estimatedSize = Math.floor(estimatedSize * (spentValue < 500 ? 0.7 : 0.4));
+            }
+            break;
+          case 'order_count':
+            const orderValue = parseInt(rule.value);
+            if (rule.operator === 'gt') {
+              estimatedSize = Math.floor(estimatedSize * (orderValue > 5 ? 0.25 : 0.5));
+            }
+            break;
+          case 'city':
+            estimatedSize = Math.floor(estimatedSize * 0.15); // City-specific targeting
+            break;
+          case 'age':
+            estimatedSize = Math.floor(estimatedSize * 0.4); // Age group targeting
+            break;
+          default:
+            estimatedSize = Math.floor(estimatedSize * 0.6);
+        }
+      }
+    });
+
+    return Math.max(estimatedSize, 50); // Minimum audience size
+  };
+
+  const [estimatedAudience, setEstimatedAudience] = useState(calculateAudienceSize(rules));
+
   // Notify parent component when rules change
   useEffect(() => {
+    const newAudience = calculateAudienceSize(rules);
+    setEstimatedAudience(newAudience);
     if (onRulesChange) {
       onRulesChange(rules);
     }
@@ -88,16 +129,13 @@ const RuleBuilder = ({ onRulesChange }: RuleBuilderProps) => {
     return operators[field as keyof typeof operators] || operators.default;
   };
 
-  // Calculate estimated audience size based on rules
-  const estimatedAudience = Math.floor(Math.random() * 1000) + 100;
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Audience Rules</h3>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Users className="w-4 h-4" />
-          <span>Est. audience: <strong>{estimatedAudience}</strong> customers</span>
+          <span>Est. audience: <strong>{estimatedAudience.toLocaleString()}</strong> customers</span>
         </div>
       </div>
 
@@ -195,6 +233,9 @@ const RuleBuilder = ({ onRulesChange }: RuleBuilderProps) => {
               `${index > 0 ? ` ${rule.logic} ` : ''}${rule.field} ${rule.operator} ${rule.value}`
             ).join('')}`
           }
+        </p>
+        <p className="text-sm text-blue-600 mt-1 font-semibold">
+          Estimated reach: {estimatedAudience.toLocaleString()} customers
         </p>
       </div>
     </div>

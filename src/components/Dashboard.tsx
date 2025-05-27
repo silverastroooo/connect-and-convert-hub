@@ -4,15 +4,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, MessageSquare, Target, Plus, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useCampaigns } from '@/contexts/CampaignContext';
+import { useCampaigns } from '@/hooks/useCampaigns';
+import { useAudienceSegments } from '@/hooks/useAudienceSegments';
 
 const Dashboard = () => {
   const { campaigns } = useCampaigns();
+  const { segments } = useAudienceSegments();
+  
+  // Calculate total audience size from segments
+  const totalAudienceSize = segments.reduce((total, segment) => total + segment.size, 0);
   
   const stats = [
     {
       title: 'Total Customers',
-      value: '2,547',
+      value: totalAudienceSize.toLocaleString(),
       change: '+12.5%',
       icon: Users,
       color: 'text-blue-600'
@@ -25,15 +30,15 @@ const Dashboard = () => {
       color: 'text-green-600'
     },
     {
-      title: 'Conversion Rate',
-      value: '24.8%',
+      title: 'Total Segments',
+      value: segments.length.toString(),
       change: '+3.2%',
       icon: Target,
       color: 'text-purple-600'
     },
     {
-      title: 'Revenue Impact',
-      value: '₹1,24,500',
+      title: 'Total Campaigns',
+      value: campaigns.length.toString(),
       change: '+18.7%',
       icon: TrendingUp,
       color: 'text-orange-600'
@@ -91,25 +96,36 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentCampaigns.map((campaign) => (
-                <div key={campaign.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{campaign.name}</h4>
-                    <p className="text-sm text-gray-600">
-                      {campaign.audienceSize} recipients • {campaign.deliveredCount || 0} delivered
-                    </p>
+              {recentCampaigns.length > 0 ? (
+                recentCampaigns.map((campaign) => (
+                  <div key={campaign.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{campaign.name}</h4>
+                      <p className="text-sm text-gray-600">
+                        {campaign.audience_size.toLocaleString()} recipients • {campaign.delivered_count.toLocaleString()} delivered
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        campaign.status === 'active' 
+                          ? 'bg-green-100 text-green-800' 
+                          : campaign.status === 'completed'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {campaign.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      campaign.status === 'active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {campaign.status}
-                    </span>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-gray-500">
+                  <p>No campaigns created yet</p>
+                  <Link to="/campaigns" className="text-blue-600 hover:underline">
+                    Create your first campaign
+                  </Link>
                 </div>
-              ))}
+              )}
             </div>
           </CardContent>
         </Card>

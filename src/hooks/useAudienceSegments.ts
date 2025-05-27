@@ -8,7 +8,7 @@ interface AudienceSegment {
   id: string;
   name: string;
   description: string;
-  rules: any[];
+  rules: any;
   size: number;
   created_at: string;
   updated_at: string;
@@ -30,7 +30,18 @@ export const useAudienceSegments = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSegments(data || []);
+      
+      const formattedSegments = (data || []).map(segment => ({
+        id: segment.id,
+        name: segment.name,
+        description: segment.description || '',
+        rules: Array.isArray(segment.rules) ? segment.rules : [],
+        size: segment.size || 0,
+        created_at: segment.created_at,
+        updated_at: segment.updated_at
+      }));
+      
+      setSegments(formattedSegments);
     } catch (error: any) {
       toast({
         title: "Error fetching segments",
@@ -57,7 +68,17 @@ export const useAudienceSegments = () => {
 
       if (error) throw error;
       
-      setSegments(prev => [data, ...prev]);
+      const formattedSegment = {
+        id: data.id,
+        name: data.name,
+        description: data.description || '',
+        rules: Array.isArray(data.rules) ? data.rules : [],
+        size: data.size || 0,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
+      setSegments(prev => [formattedSegment, ...prev]);
       toast({
         title: "Segment created!",
         description: `${data.name} has been created successfully.`,
@@ -82,8 +103,18 @@ export const useAudienceSegments = () => {
 
       if (error) throw error;
       
+      const formattedSegment = {
+        id: data.id,
+        name: data.name,
+        description: data.description || '',
+        rules: Array.isArray(data.rules) ? data.rules : [],
+        size: data.size || 0,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
       setSegments(prev => prev.map(segment => 
-        segment.id === id ? data : segment
+        segment.id === id ? formattedSegment : segment
       ));
     } catch (error: any) {
       toast({
