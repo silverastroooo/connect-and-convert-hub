@@ -1,11 +1,11 @@
 
 import React from 'react';
+import Navigation from '@/components/Navigation';
+import CampaignCreator from '@/components/CampaignCreator';
 import { useAuth } from '@/hooks/useAuth';
 import LoginPage from '@/components/LoginPage';
-import Navigation from '@/components/Navigation';
-import Dashboard from '@/components/Dashboard';
 
-const Index = () => {
+const CampaignPage = () => {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -24,10 +24,10 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <Dashboard />
+        <CampaignCreator />
       </main>
     </div>
   );
 };
 
-export default Index;
+export default CampaignPage;
