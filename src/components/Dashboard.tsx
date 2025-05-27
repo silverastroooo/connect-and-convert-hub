@@ -3,8 +3,12 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Users, MessageSquare, Target, Plus, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useCampaigns } from '@/contexts/CampaignContext';
 
 const Dashboard = () => {
+  const { campaigns } = useCampaigns();
+  
   const stats = [
     {
       title: 'Total Customers',
@@ -15,7 +19,7 @@ const Dashboard = () => {
     },
     {
       title: 'Active Campaigns',
-      value: '8',
+      value: campaigns.filter(c => c.status === 'active').length.toString(),
       change: '+2',
       icon: MessageSquare,
       color: 'text-green-600'
@@ -36,11 +40,7 @@ const Dashboard = () => {
     }
   ];
 
-  const recentCampaigns = [
-    { name: 'Welcome Series', audience: 1247, sent: 1247, delivered: 1198, status: 'completed' },
-    { name: 'Win-back Campaign', audience: 856, sent: 856, delivered: 821, status: 'active' },
-    { name: 'Product Launch', audience: 2134, sent: 2134, delivered: 2089, status: 'completed' },
-  ];
+  const recentCampaigns = campaigns.slice(0, 3);
 
   return (
     <div className="space-y-6">
@@ -50,10 +50,12 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with your campaigns.</p>
         </div>
-        <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-          <Plus className="w-4 h-4 mr-2" />
-          New Campaign
-        </Button>
+        <Link to="/campaigns">
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            <Plus className="w-4 h-4 mr-2" />
+            New Campaign
+          </Button>
+        </Link>
       </div>
 
       {/* Stats Grid */}
@@ -89,12 +91,12 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentCampaigns.map((campaign, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              {recentCampaigns.map((campaign) => (
+                <div key={campaign.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <h4 className="font-medium text-gray-900">{campaign.name}</h4>
                     <p className="text-sm text-gray-600">
-                      {campaign.audience} recipients • {campaign.delivered} delivered
+                      {campaign.audienceSize} recipients • {campaign.deliveredCount || 0} delivered
                     </p>
                   </div>
                   <div className="text-right">
@@ -118,18 +120,24 @@ const Dashboard = () => {
             <CardDescription>Get started with common tasks</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Campaign
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <Users className="w-4 h-4 mr-2" />
-              Build Audience Segment
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <BarChart3 className="w-4 h-4 mr-2" />
-              View Analytics
-            </Button>
+            <Link to="/campaigns" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Plus className="w-4 h-4 mr-2" />
+                Create New Campaign
+              </Button>
+            </Link>
+            <Link to="/audience" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <Users className="w-4 h-4 mr-2" />
+                Build Audience Segment
+              </Button>
+            </Link>
+            <Link to="/campaigns" className="block">
+              <Button variant="outline" className="w-full justify-start">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                View Analytics
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

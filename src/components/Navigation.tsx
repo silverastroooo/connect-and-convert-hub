@@ -1,11 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, BarChart3, Users, MessageSquare, Settings } from 'lucide-react';
+import { LogOut, User, BarChart3, Users, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navigation = () => {
   const { user, logout } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow-sm">
@@ -19,18 +23,39 @@ const Navigation = () => {
             </div>
             <div className="hidden md:block ml-10">
               <div className="flex items-baseline space-x-4">
-                <a href="/" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                <Link 
+                  to="/" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/') 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-gray-700 hover:text-blue-600'
+                  }`}
+                >
                   <BarChart3 className="inline w-4 h-4 mr-1" />
                   Dashboard
-                </a>
-                <a href="/campaigns" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                </Link>
+                <Link 
+                  to="/campaigns" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/campaigns') 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-gray-700 hover:text-blue-600'
+                  }`}
+                >
                   <MessageSquare className="inline w-4 h-4 mr-1" />
                   Campaigns
-                </a>
-                <a href="/audience" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                </Link>
+                <Link 
+                  to="/audience" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/audience') 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-gray-700 hover:text-blue-600'
+                  }`}
+                >
                   <Users className="inline w-4 h-4 mr-1" />
                   Audience
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -8,13 +8,18 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Send, Save } from 'lucide-react';
 import RuleBuilder from './RuleBuilder';
+import CampaignList from './CampaignList';
 import { useToast } from '@/hooks/use-toast';
+import { useCampaigns } from '@/contexts/CampaignContext';
 
 const CampaignCreator = () => {
   const [campaignName, setCampaignName] = useState('');
+  const [campaignGoal, setCampaignGoal] = useState('');
+  const [campaignDescription, setCampaignDescription] = useState('');
   const [campaignMessage, setCampaignMessage] = useState('');
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const { toast } = useToast();
+  const { addCampaign } = useCampaigns();
 
   const generateAIMessage = async () => {
     setIsGeneratingAI(true);
@@ -36,6 +41,30 @@ const CampaignCreator = () => {
   };
 
   const saveCampaign = () => {
+    if (!campaignName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a campaign name.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addCampaign({
+      name: campaignName,
+      goal: campaignGoal,
+      description: campaignDescription,
+      message: campaignMessage,
+      audienceSize: Math.floor(Math.random() * 1000) + 100,
+      status: 'draft'
+    });
+
+    // Reset form
+    setCampaignName('');
+    setCampaignGoal('');
+    setCampaignDescription('');
+    setCampaignMessage('');
+
     toast({
       title: "Campaign Saved!",
       description: "Your campaign has been saved as a draft.",
@@ -43,6 +72,32 @@ const CampaignCreator = () => {
   };
 
   const launchCampaign = () => {
+    if (!campaignName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a campaign name.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addCampaign({
+      name: campaignName,
+      goal: campaignGoal,
+      description: campaignDescription,
+      message: campaignMessage,
+      audienceSize: Math.floor(Math.random() * 1000) + 100,
+      status: 'active',
+      sentCount: Math.floor(Math.random() * 800) + 200,
+      deliveredCount: Math.floor(Math.random() * 700) + 180
+    });
+
+    // Reset form
+    setCampaignName('');
+    setCampaignGoal('');
+    setCampaignDescription('');
+    setCampaignMessage('');
+
     toast({
       title: "Campaign Launched!",
       description: "Your campaign is now being sent to the target audience.",
@@ -50,20 +105,25 @@ const CampaignCreator = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Create Campaign</h1>
-          <p className="text-gray-600 mt-1">Build and launch your marketing campaign</p>
+          <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
+          <p className="text-gray-600 mt-1">Create, manage, and track your marketing campaigns</p>
         </div>
       </div>
 
-      <Tabs defaultValue="details" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="list" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="list">All Campaigns</TabsTrigger>
           <TabsTrigger value="details">Campaign Details</TabsTrigger>
           <TabsTrigger value="audience">Target Audience</TabsTrigger>
           <TabsTrigger value="message">Message & AI</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="list" className="space-y-6">
+          <CampaignList />
+        </TabsContent>
 
         <TabsContent value="details" className="space-y-6">
           <Card>
@@ -86,6 +146,8 @@ const CampaignCreator = () => {
                 <Input 
                   id="campaign-goal"
                   placeholder="e.g., Increase sales, Re-engage customers"
+                  value={campaignGoal}
+                  onChange={(e) => setCampaignGoal(e.target.value)}
                 />
               </div>
               <div>
@@ -94,6 +156,8 @@ const CampaignCreator = () => {
                   id="campaign-description"
                   placeholder="Describe the purpose and expected outcome of this campaign"
                   rows={3}
+                  value={campaignDescription}
+                  onChange={(e) => setCampaignDescription(e.target.value)}
                 />
               </div>
             </CardContent>
