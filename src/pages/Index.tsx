@@ -1,12 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import LoginPage from '@/components/LoginPage';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Dashboard from '@/components/Dashboard';
 
 const Index = () => {
   const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (
@@ -17,7 +24,7 @@ const Index = () => {
   }
 
   if (!user) {
-    return <LoginPage />;
+    return null;
   }
 
   return (

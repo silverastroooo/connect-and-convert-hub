@@ -1,5 +1,7 @@
+import React, { createContext, useContext } from 'react';
 
-import React, { createContext, useContext, useState } from 'react';
+// This context is now deprecated - we use Supabase hooks instead
+// Keeping this file to avoid breaking imports during transition
 
 interface Campaign {
   id: string;
@@ -24,54 +26,16 @@ interface CampaignContextType {
 const CampaignContext = createContext<CampaignContextType | undefined>(undefined);
 
 export const CampaignProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([
-    {
-      id: '1',
-      name: 'Welcome Series',
-      message: 'Welcome to our platform! Get 20% off your first order.',
-      goal: 'Welcome new users',
-      description: 'Automated welcome campaign for new registrations',
-      audienceSize: 1247,
-      status: 'completed',
-      createdAt: new Date(Date.now() - 86400000 * 2),
-      sentCount: 1247,
-      deliveredCount: 1198
-    },
-    {
-      id: '2',
-      name: 'Win-back Campaign',
-      message: 'We miss you! Come back and enjoy 25% off.',
-      goal: 'Re-engage inactive users',
-      description: 'Target users inactive for 30+ days',
-      audienceSize: 856,
-      status: 'active',
-      createdAt: new Date(Date.now() - 86400000),
-      sentCount: 856,
-      deliveredCount: 821
-    }
-  ]);
-
-  const addCampaign = (campaignData: Omit<Campaign, 'id' | 'createdAt'>) => {
-    const newCampaign: Campaign = {
-      ...campaignData,
-      id: Date.now().toString(),
-      createdAt: new Date()
-    };
-    setCampaigns(prev => [newCampaign, ...prev]);
-  };
-
-  const updateCampaign = (id: string, updates: Partial<Campaign>) => {
-    setCampaigns(prev => prev.map(campaign => 
-      campaign.id === id ? { ...campaign, ...updates } : campaign
-    ));
-  };
-
-  const deleteCampaign = (id: string) => {
-    setCampaigns(prev => prev.filter(campaign => campaign.id !== id));
+  // Empty provider - functionality moved to useCampaigns hook
+  const contextValue: CampaignContextType = {
+    campaigns: [],
+    addCampaign: () => {},
+    updateCampaign: () => {},
+    deleteCampaign: () => {}
   };
 
   return (
-    <CampaignContext.Provider value={{ campaigns, addCampaign, updateCampaign, deleteCampaign }}>
+    <CampaignContext.Provider value={contextValue}>
       {children}
     </CampaignContext.Provider>
   );

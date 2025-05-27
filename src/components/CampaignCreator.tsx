@@ -10,7 +10,7 @@ import { Sparkles, Send, Save } from 'lucide-react';
 import RuleBuilder from './RuleBuilder';
 import CampaignList from './CampaignList';
 import { useToast } from '@/hooks/use-toast';
-import { useCampaigns } from '@/contexts/CampaignContext';
+import { useCampaigns } from '@/hooks/useCampaigns';
 
 const CampaignCreator = () => {
   const [campaignName, setCampaignName] = useState('');
@@ -40,7 +40,7 @@ const CampaignCreator = () => {
     }, 2000);
   };
 
-  const saveCampaign = () => {
+  const saveCampaign = async () => {
     if (!campaignName.trim()) {
       toast({
         title: "Error",
@@ -50,13 +50,15 @@ const CampaignCreator = () => {
       return;
     }
 
-    addCampaign({
+    await addCampaign({
       name: campaignName,
       goal: campaignGoal,
       description: campaignDescription,
       message: campaignMessage,
-      audienceSize: Math.floor(Math.random() * 1000) + 100,
-      status: 'draft'
+      audience_size: Math.floor(Math.random() * 1000) + 100,
+      status: 'draft',
+      sent_count: 0,
+      delivered_count: 0
     });
 
     // Reset form
@@ -64,14 +66,9 @@ const CampaignCreator = () => {
     setCampaignGoal('');
     setCampaignDescription('');
     setCampaignMessage('');
-
-    toast({
-      title: "Campaign Saved!",
-      description: "Your campaign has been saved as a draft.",
-    });
   };
 
-  const launchCampaign = () => {
+  const launchCampaign = async () => {
     if (!campaignName.trim()) {
       toast({
         title: "Error",
@@ -81,15 +78,15 @@ const CampaignCreator = () => {
       return;
     }
 
-    addCampaign({
+    await addCampaign({
       name: campaignName,
       goal: campaignGoal,
       description: campaignDescription,
       message: campaignMessage,
-      audienceSize: Math.floor(Math.random() * 1000) + 100,
+      audience_size: Math.floor(Math.random() * 1000) + 100,
       status: 'active',
-      sentCount: Math.floor(Math.random() * 800) + 200,
-      deliveredCount: Math.floor(Math.random() * 700) + 180
+      sent_count: Math.floor(Math.random() * 800) + 200,
+      delivered_count: Math.floor(Math.random() * 700) + 180
     });
 
     // Reset form
@@ -97,11 +94,6 @@ const CampaignCreator = () => {
     setCampaignGoal('');
     setCampaignDescription('');
     setCampaignMessage('');
-
-    toast({
-      title: "Campaign Launched!",
-      description: "Your campaign is now being sent to the target audience.",
-    });
   };
 
   return (

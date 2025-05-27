@@ -1,12 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import CampaignCreator from '@/components/CampaignCreator';
 import { useAuth } from '@/hooks/useAuth';
-import LoginPage from '@/components/LoginPage';
 
 const CampaignPage = () => {
   const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, isLoading, navigate]);
 
   if (isLoading) {
     return (
@@ -17,7 +24,7 @@ const CampaignPage = () => {
   }
 
   if (!user) {
-    return <LoginPage />;
+    return null;
   }
 
   return (

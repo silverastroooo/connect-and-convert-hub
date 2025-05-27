@@ -9,6 +9,7 @@ import { CampaignProvider } from "@/contexts/CampaignContext";
 import Index from "./pages/Index";
 import CampaignPage from "./pages/CampaignPage";
 import AudiencePage from "./pages/AudiencePage";
+import AuthPage from "./pages/AuthPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<AuthPage />} />
               <Route path="/campaigns" element={<CampaignPage />} />
               <Route path="/audience" element={<AudiencePage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

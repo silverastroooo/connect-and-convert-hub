@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -14,10 +14,21 @@ interface Rule {
   logic?: 'AND' | 'OR';
 }
 
-const RuleBuilder = () => {
+interface RuleBuilderProps {
+  onRulesChange?: (rules: Rule[]) => void;
+}
+
+const RuleBuilder = ({ onRulesChange }: RuleBuilderProps) => {
   const [rules, setRules] = useState<Rule[]>([
     { id: '1', field: '', operator: '', value: '' }
   ]);
+
+  // Notify parent component when rules change
+  useEffect(() => {
+    if (onRulesChange) {
+      onRulesChange(rules);
+    }
+  }, [rules, onRulesChange]);
 
   const fields = [
     { value: 'total_spent', label: 'Total Spent' },

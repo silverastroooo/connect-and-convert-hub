@@ -9,7 +9,149 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      audience_segments: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          rules: Json
+          size: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          rules?: Json
+          size?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          rules?: Json
+          size?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      campaigns: {
+        Row: {
+          audience_size: number | null
+          created_at: string | null
+          delivered_count: number | null
+          description: string | null
+          goal: string | null
+          id: string
+          message: string | null
+          name: string
+          sent_count: number | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          audience_size?: number | null
+          created_at?: string | null
+          delivered_count?: number | null
+          description?: string | null
+          goal?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          sent_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          audience_size?: number | null
+          created_at?: string | null
+          delivered_count?: number | null
+          description?: string | null
+          goal?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          sent_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      communication_logs: {
+        Row: {
+          campaign_id: string
+          delivered_at: string | null
+          failed_reason: string | null
+          id: string
+          message: string | null
+          sent_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          delivered_at?: string | null
+          failed_reason?: string | null
+          id?: string
+          message?: string | null
+          sent_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          delivered_at?: string | null
+          failed_reason?: string | null
+          id?: string
+          message?: string | null
+          sent_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_logs_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

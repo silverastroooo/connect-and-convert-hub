@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BarChart3, Users, MessageSquare, Plus } from 'lucide-react';
-import { useCampaigns } from '@/contexts/CampaignContext';
+import { useCampaigns } from '@/hooks/useCampaigns';
 
 const CampaignList = () => {
-  const { campaigns } = useCampaigns();
+  const { campaigns, isLoading } = useCampaigns();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -21,6 +21,14 @@ const CampaignList = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   if (campaigns.length === 0) {
     return (
@@ -66,24 +74,24 @@ const CampaignList = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Audience Size</span>
-                  <span className="font-semibold">{campaign.audienceSize.toLocaleString()}</span>
+                  <span className="font-semibold">{campaign.audience_size.toLocaleString()}</span>
                 </div>
-                {campaign.sentCount && (
+                {campaign.sent_count > 0 && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Sent</span>
-                    <span className="font-semibold">{campaign.sentCount.toLocaleString()}</span>
+                    <span className="font-semibold">{campaign.sent_count.toLocaleString()}</span>
                   </div>
                 )}
-                {campaign.deliveredCount && (
+                {campaign.delivered_count > 0 && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Delivered</span>
-                    <span className="font-semibold">{campaign.deliveredCount.toLocaleString()}</span>
+                    <span className="font-semibold">{campaign.delivered_count.toLocaleString()}</span>
                   </div>
                 )}
               </div>
               
               <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                Created: {campaign.createdAt.toLocaleDateString()}
+                Created: {new Date(campaign.created_at).toLocaleDateString()}
               </div>
 
               <div className="flex space-x-2">
